@@ -1,5 +1,4 @@
-import React from "react";
+export { metadata } from "@/layouts/PlayerLayout";
 
-export default function MyLayout({ children }: { children: React.ReactNode }) {
-  return <body style={{ background: "red" }}>{children}</body>;
-}
+import PlayerLayout from "@/layouts/PlayerLayout";
+export default PlayerLayout;

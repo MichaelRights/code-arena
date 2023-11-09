@@ -1,5 +1,8 @@
+"use client";
 import type { Metadata } from "next";
 import "../globals.css";
+import { AppBar, Typography } from "@mui/material";
+import { DefaultThemeProvider } from "@/themes";
 
 export const metadata: Metadata = {
   title: "Code Arena",
@@ -14,7 +17,14 @@ export default function MainLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning={true}>
-      <body suppressHydrationWarning={true}>{children}</body>
+      <body suppressHydrationWarning={true}>
+        <DefaultThemeProvider>
+          <AppBar sx={{ p: 1 }} position="fixed">
+            <Typography variant="h6">Code Arena</Typography>
+          </AppBar>
+          {children}
+        </DefaultThemeProvider>
+      </body>
     </html>
   );
 }

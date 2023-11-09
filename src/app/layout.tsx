@@ -1,4 +1,4 @@
-export { metadata } from "@/layouts/PlayerLayout";
+export { metadata } from "@/layouts/EmptyLayout";
 
-import PlayerLayout from "@/layouts/PlayerLayout";
-export default PlayerLayout;
+import EmptyLayout from "@/layouts/EmptyLayout";
+export default EmptyLayout;

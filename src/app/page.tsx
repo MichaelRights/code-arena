@@ -1,7 +1,10 @@
+"use client";
 import { Typography, Button, Box, SxProps } from "@mui/material";
 import styles from "./page.module.css";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
   return (
     <main className={styles.main}>
       <Typography variant="h4">Welcome to Code Arena!</Typography>
@@ -9,7 +12,11 @@ export default function Home() {
         Jump in to
       </Typography>
       <Box my={2} display="flex" alignContent="center" alignItems="center">
-        <Button variant="contained" sx={joinBtn}>
+        <Button
+          onClick={() => router.push("/tournaments")}
+          variant="contained"
+          sx={joinBtn}
+        >
           Play
         </Button>
         <Typography variant="body1" px={1}>
