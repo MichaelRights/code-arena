@@ -3,8 +3,11 @@ import React from "react";
 
 export const theme = createTheme({
   palette: {
+    mode: "dark",
     primary: {
       main: "#adeade",
+      dark: "#FFFFFF",
+      light: "#000000",
     },
   },
 });

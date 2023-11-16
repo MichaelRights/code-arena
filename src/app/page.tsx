@@ -9,7 +9,7 @@ export default function Home() {
     <main className={styles.main}>
       <Typography variant="h4">Welcome to Code Arena!</Typography>
       <Typography variant="h5" my={2}>
-        Jump in to
+        How would you like to get involved?
       </Typography>
       <Box my={2} display="flex" alignContent="center" alignItems="center">
         <Button
@@ -17,7 +17,7 @@ export default function Home() {
           variant="contained"
           sx={joinBtn}
         >
-          Play
+          Participate
         </Button>
         <Typography variant="body1" px={1}>
           or
@@ -26,7 +26,6 @@ export default function Home() {
           Organize
         </Button>
       </Box>
-      <Typography variant="h6">Match</Typography>
     </main>
   );
 }
