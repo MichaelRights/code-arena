@@ -1,7 +1,8 @@
 import React from "react";
 import type { Metadata, NextPageContext } from "next";
 import { PlayerLayout } from "@/layouts";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import { Button, Typography } from "@mui/material";
 
 export const metadata: Metadata = {
   title: "Code Arena",
@@ -10,12 +11,16 @@ export const metadata: Metadata = {
 };
 
 export default function Tournament(props: any) {
-  console.log(props);
-
   const params = useParams();
+  const router = useRouter();
   return (
     <PlayerLayout>
-      <div>{JSON.stringify(params)}</div>
+      <Button
+        variant="contained"
+        onClick={() => router.push(`/tournaments/${props.id}/arena`)}
+      >
+        <Typography>{params.id}</Typography>
+      </Button>
     </PlayerLayout>
   );
 }
