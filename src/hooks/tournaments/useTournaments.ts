@@ -1,4 +1,4 @@
-import { getTournaments } from "@/services/tournaments";
+import { getTournaments } from "@/services/tournamentService";
 import { useQuery } from "react-query";
 
 export function useTournaments() {
