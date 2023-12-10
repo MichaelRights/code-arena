@@ -1,3 +1,5 @@
+import { TESTCASES } from "@/data";
+import { TestCase } from "@/models/arena";
 import { DetailedTournament, Tournament } from "@/models/tournaments";
 
 export function getTournaments() {
@@ -20,4 +22,10 @@ export function getOrganizerTournaments() {
 
 export async function getTournamentById(id: number) {
   return (await getTournaments()).find((t) => t.id === id);
+}
+
+export async function getTestCases(taskId: number) {
+  return new Promise<TestCase[]>((resolve) => {
+    resolve(TESTCASES);
+  });
 }

@@ -2,6 +2,11 @@ import { ThemeProvider, createTheme } from "@mui/material";
 import React from "react";
 
 export const theme = createTheme({
+  typography: {
+    button: {
+      textTransform: "none",
+    },
+  },
   palette: {
     mode: "dark",
     primary: {
