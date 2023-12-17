@@ -1,18 +1,33 @@
 import { DragStartEndHandler } from "@/models/common";
-import { Box } from "@mui/material";
+import { Box, BoxProps } from "@mui/material";
 import React, { MouseEvent } from "react";
 
-interface HorizontalSplitterProps {
-  width: number;
-  zIndex: number;
+interface SplitterProps {
+  height?: number;
+  width?: number;
+  zIndex?: number;
+  orientation: "horizontal" | "vertical";
   onDragStart: DragStartEndHandler;
 }
 
-export function HorizontalSplitter({
+const orientationBasedStyle = {
+  horizontal: {
+    borderBottom: "1px solid gray",
+    cursor: "ns-resize",
+  },
+  vertical: {
+    borderRight: "1px solid gray",
+    cursor: "ew-resize",
+  },
+};
+
+export function Splitter({
   zIndex,
-  width,
+  width = 4,
+  height = 4,
+  orientation,
   onDragStart,
-}: HorizontalSplitterProps) {
+}: SplitterProps) {
   return (
     <Box
       onDrag={(e) => e.stopPropagation()}
@@ -24,6 +39,7 @@ export function HorizontalSplitter({
         });
       }}
       style={{
+        height,
         width,
       }}
       zIndex={zIndex}
@@ -31,9 +47,7 @@ export function HorizontalSplitter({
         "&:hover": {
           background: "blue",
         },
-        height: 4,
-        borderBottom: "1px solid gray",
-        cursor: "ns-resize",
+        ...orientationBasedStyle[orientation],
       }}
     />
   );

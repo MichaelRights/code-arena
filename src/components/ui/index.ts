@@ -1,6 +1,5 @@
 export { FlexibleBox } from "./FlexibleBox";
-export { VerticalSplitter } from "./VerticalSplitter";
-export { HorizontalSplitter } from "./HorizontalSplitter";
+export { Splitter } from "./Splitter";
 export { Tabbar } from "./Tabbar";
 export { TabButton } from "./TabButton";
 export { ScreenSizeButton } from "./ScreenSizeButton";

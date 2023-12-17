@@ -1,6 +1,6 @@
 import { TabButton } from "@/components/ui";
-import { TestCase } from "@/models/arena";
-import { Box, Button, Typography } from "@mui/material";
+import { TestCase } from "@/models/tasks";
+import { Box, Typography } from "@mui/material";
 import React, { useState } from "react";
 
 interface TestCasesProps {
