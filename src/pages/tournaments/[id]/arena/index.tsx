@@ -52,6 +52,9 @@ export default function Arena(props: any) {
     setTestCasesMaximized((prev) => !prev);
   }, [testCasesMaximzed, layoutSize]);
 
+  const testCasesHeight = testCasesMaximzed
+    ? layoutSize.height
+    : layoutSize.height / 2 - horizontalSplitterPosition - 4;
   return (
     <PlayerLayout
       headerChildren={
@@ -170,15 +173,7 @@ export default function Arena(props: any) {
               width={layoutSize.width / 2 - verticalSplitterPosition}
             />
             {!(editorMaximzed || descriptionMaximzed) && (
-              <FlexibleBox
-                zIndex={2}
-                height={
-                  testCasesMaximzed
-                    ? layoutSize.height
-                    : layoutSize.height / 2 - horizontalSplitterPosition - 4
-                }
-                width="100%"
-              >
+              <FlexibleBox zIndex={2} height={testCasesHeight} width="100%">
                 <Tabbar>
                   <ScreenSizeButton
                     maximized={testCasesMaximzed}
@@ -186,7 +181,9 @@ export default function Arena(props: any) {
                   />
                   <TabButton selected={true}>Testcase</TabButton>
                 </Tabbar>
-                {!!testCases && <TestCases data={testCases} />}
+                <Box height={testCasesHeight - 48} overflow="auto">
+                  {!!testCases && <TestCases data={testCases} />}
+                </Box>
               </FlexibleBox>
             )}
           </Box>
