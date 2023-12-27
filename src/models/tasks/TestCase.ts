@@ -1,7 +1,12 @@
+import { TestCaseInput } from ".";
+
 export interface TestCase {
   id: number;
   name: string;
-  testInput: string;
+  parameters: TestCaseInput[];
+}
+
+export interface ExecutedTestCase extends TestCase {
   testOutput?: string;
-  testExpected?: string;
+  expectedOutput?: string;
 }

@@ -29,16 +29,11 @@ export function TestCases({ data }: TestCasesProps) {
         })}
       </Box>
       <Box display="flex" flexDirection="column" gap={1} mt={2}>
-        <TestCaseField label="Input">
-          {selectedTestCase.testInput}
-        </TestCaseField>
-
-        <TestCaseField label="Output">
-          {selectedTestCase.testOutput}
-        </TestCaseField>
-        <TestCaseField label="Expected">
-          {selectedTestCase.testExpected}
-        </TestCaseField>
+        {selectedTestCase.parameters.map((parameter) => (
+          <TestCaseField key={parameter.key} label={`${parameter.key} =`}>
+            {parameter.value}
+          </TestCaseField>
+        ))}
       </Box>
     </Box>
   );

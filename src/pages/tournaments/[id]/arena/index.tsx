@@ -13,11 +13,16 @@ import {
   Splitter,
 } from "@/components/ui";
 import { TestCases } from "@/components/arena";
-import { useTestCases } from "@/hooks/tournaments";
+import { getTasksByTournamentId } from "@/services/taskService";
+import { Task } from "@/models/tasks";
 
 const Editor = dynamic(import("@monaco-editor/react"), { ssr: false });
 
-export default function Arena(props: any) {
+interface ArenaProps {
+  tasks: Task[];
+}
+
+export default function Arena(props: ArenaProps) {
   const layoutSize = useLayoutSize({ heightDifference: 70 });
   const [descriptionMaximzed, setDescriptionMaximized] = useState(false);
   const [editorMaximzed, setEditorMaximized] = useState(false);
@@ -30,15 +35,14 @@ export default function Arena(props: any) {
     orientation: "vertical",
   });
 
+  const selectedTask = props.tasks[0];
+
   const {
     splitterPosition: horizontalSplitterPosition,
-    setSplitterPosition: setHorizontalSplitterPosition,
     handleDragStart: handleHorizontalSplitterDragStart,
   } = useSplitter({
     orientation: "horizontal",
   });
-
-  const { data: testCases } = useTestCases(props.id);
 
   const toggleDescriptionSize = useCallback(() => {
     setDescriptionMaximized((prev) => !prev);
@@ -85,24 +89,23 @@ export default function Arena(props: any) {
                 <TabButton selected={true}>Description</TabButton>
               </Box>
             </Tabbar>
-            <Box p={2}>
+            <Box p={2} overflow="auto" height={layoutSize.height - 48}>
               <Box
                 pb={1}
                 display="flex"
                 justifyContent="space-between"
                 alignItems="center"
               >
-                <Typography variant="h6">Task</Typography>
-                <Typography color="green" variant="body1">
-                  Solved
-                </Typography>
+                <Typography variant="h6">{selectedTask.title}</Typography>
+                {selectedTask.solved && (
+                  <Typography color="green" variant="body1">
+                    Solved
+                  </Typography>
+                )}
               </Box>
-              <Typography variant="body2">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Laudantium nihil, debitis quidem omnis suscipit rerum mollitia
-                similique rem et incidunt enim iure labore quibusdam? Nostrum
-                enim voluptatem consequatur pariatur ducimus.
-              </Typography>
+              <div
+                dangerouslySetInnerHTML={{ __html: selectedTask.description }}
+              ></div>
             </Box>
           </FlexibleBox>
         )}
@@ -143,24 +146,16 @@ export default function Arena(props: any) {
                 </Tabbar>
                 <Editor
                   options={{
-                    quickSuggestions: {
-                      other: false,
-                      comments: false,
-                      strings: false,
+                    suggest: {
+                      showIcons: false,
                     },
-                    parameterHints: {
-                      enabled: false,
-                    },
-                    suggestOnTriggerCharacters: false,
-                    acceptSuggestionOnEnter: "off",
-                    tabCompletion: "off",
-                    wordBasedSuggestions: false,
+
                     minimap: {
                       enabled: false,
                     },
                   }}
-                  defaultLanguage="javascript"
-                  defaultValue={`// ${props.id}`}
+                  defaultLanguage={selectedTask.language}
+                  defaultValue={selectedTask.defaultCode}
                   theme="vs-dark"
                 />
               </FlexibleBox>
@@ -182,7 +177,9 @@ export default function Arena(props: any) {
                   <TabButton selected={true}>Testcase</TabButton>
                 </Tabbar>
                 <Box height={testCasesHeight - 48} overflow="auto">
-                  {!!testCases && <TestCases data={testCases} />}
+                  {!!selectedTask.testCases && (
+                    <TestCases data={selectedTask.testCases} />
+                  )}
                 </Box>
               </FlexibleBox>
             )}
@@ -193,7 +190,8 @@ export default function Arena(props: any) {
   );
 }
 
-export function getServerSideProps(context: NextPageContext) {
-  const id = context.query.id;
-  return { props: context.query };
+export async function getServerSideProps(context: NextPageContext) {
+  const id = context.query.id as string;
+  const tasks = await getTasksByTournamentId(id);
+  return { props: { tasks } };
 }

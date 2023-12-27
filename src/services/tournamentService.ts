@@ -1,5 +1,5 @@
 import { TESTCASES } from "@/data";
-import { TestCase } from "@/models/arena";
+import { TestCase } from "@/models/tasks";
 import { DetailedTournament, Tournament } from "@/models/tournaments";
 
 export function getTournaments() {
