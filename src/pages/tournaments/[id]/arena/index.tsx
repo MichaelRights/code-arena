@@ -4,7 +4,7 @@ import { NextPageContext } from "next";
 import React, { useCallback, useState } from "react";
 import dynamic from "next/dynamic";
 import { Box, Button, Typography } from "@mui/material";
-import { useSplitter, useLayoutSize } from "@/hooks/common";
+import { useSplitter, useLayoutSize, useTimeout } from "@/hooks/common";
 import {
   FlexibleBox,
   ScreenSizeButton,
@@ -15,6 +15,7 @@ import {
 import { TestCases } from "@/components/arena";
 import { getTasksByTournamentId } from "@/services/taskService";
 import { Task } from "@/models/tasks";
+import moment from "moment";
 
 const Editor = dynamic(import("@monaco-editor/react"), { ssr: false });
 
@@ -27,6 +28,7 @@ export default function Arena(props: ArenaProps) {
   const [descriptionMaximzed, setDescriptionMaximized] = useState(false);
   const [editorMaximzed, setEditorMaximized] = useState(false);
   const [testCasesMaximzed, setTestCasesMaximized] = useState(false);
+  const duration = useTimeout(new Date(2023, 11, 30, 2, 0));
   const {
     splitterPosition: verticalSplitterPosition,
     setSplitterPosition: setVerticalSplitterPosition,
@@ -59,15 +61,23 @@ export default function Arena(props: ArenaProps) {
   const testCasesHeight = testCasesMaximzed
     ? layoutSize.height
     : layoutSize.height / 2 - horizontalSplitterPosition - 4;
+  const milliseconds = duration.asMilliseconds();
   return (
     <PlayerLayout
       headerChildren={
-        <Box display="flex" alignItems="center" height={32} gap={1}>
-          <Button variant="outlined">Run</Button>
-          <Button color="success" variant="contained">
-            Submit
-          </Button>
-        </Box>
+        <>
+          <Typography suppressHydrationWarning variant="h4">
+            {milliseconds > 0
+              ? moment.utc(milliseconds).format("HH:mm:ss")
+              : ""}
+          </Typography>
+          <Box display="flex" alignItems="center" height={32} gap={1}>
+            <Button variant="outlined">Run</Button>
+            <Button color="success" variant="contained">
+              Submit
+            </Button>
+          </Box>
+        </>
       }
     >
       <Box display="flex" flexDirection="row">
