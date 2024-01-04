@@ -8,5 +8,6 @@ export const TabButton = styled((props: TabButtonProps & ButtonProps) => (
   <Button size="small" {...props} />
 ))(({ selected, theme }) => ({
   color: selected ? theme.palette.primary.main : "gray",
+  fontWeight: selected ? "bold" : "normal",
   borderRadius: 8,
 }));

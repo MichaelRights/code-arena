@@ -7,5 +7,6 @@ export const Tabbar = styled(Box)({
   flexDirection: "row-reverse",
   borderTopRightRadius: 8,
   borderTopLeftRadius: 8,
+  paddingInline: 4,
   overflow: "hidden",
 });
