@@ -33,7 +33,7 @@ public:
     description: `
     <body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #1f1f1f; color: #ffffff; margin: 0; padding: 0;">
     
-        <div style="max-width: 800px;  padding: 20px; background-color: #2c2c2c; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);">
+        <div padding: 20px; background-color: #2c2c2c; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);">
             <div data-track-load="description_content" style="margin-bottom: 20px;">
                 <p style="margin-bottom: 15px;">Given an array of integers <code>nums</code> and an integer <code>target</code>, return <em>indices of the two numbers such that they add up to <code>target</code></em>.</p>
                 <p style="margin-bottom: 15px;">You may assume that each input would have <strong><em>exactly</em> one solution</strong>, and you may not use the <em>same</em> element twice.</p>

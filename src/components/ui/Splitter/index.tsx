@@ -1,6 +1,19 @@
 import { DragStartEndHandler } from "@/models/common";
-import { Box, BoxProps } from "@mui/material";
+import { Box } from "@mui/material";
 import React, { MouseEvent } from "react";
+
+const orientationBasedStyle = {
+  horizontal: {
+    outline: "0.5px solid white",
+    outlineOffset: "-20vw",
+    cursor: "ns-resize",
+  },
+  vertical: {
+    outline: "0.5px solid white",
+    outlineOffset: "-30vh",
+    cursor: "ew-resize",
+  },
+};
 
 interface SplitterProps {
   height?: number;
@@ -10,21 +23,10 @@ interface SplitterProps {
   onDragStart: DragStartEndHandler;
 }
 
-const orientationBasedStyle = {
-  horizontal: {
-    borderBottom: "1px solid gray",
-    cursor: "ns-resize",
-  },
-  vertical: {
-    borderRight: "1px solid gray",
-    cursor: "ew-resize",
-  },
-};
-
 export function Splitter({
   zIndex,
-  width = 4,
-  height = 4,
+  width = 6,
+  height = 6,
   orientation,
   onDragStart,
 }: SplitterProps) {
@@ -41,12 +43,15 @@ export function Splitter({
       style={{
         height,
         width,
+        minWidth: width,
+        minHeight: height,
       }}
       zIndex={zIndex}
       sx={{
         "&:hover": {
-          background: "blue",
+          background: "#1338BE",
         },
+        borderRadius: 20,
         ...orientationBasedStyle[orientation],
       }}
     />

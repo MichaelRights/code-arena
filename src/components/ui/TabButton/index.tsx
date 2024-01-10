@@ -7,7 +7,7 @@ interface TabButtonProps {
 export const TabButton = styled((props: TabButtonProps & ButtonProps) => (
   <Button size="small" {...props} />
 ))(({ selected, theme }) => ({
-  color: selected ? theme.palette.primary.main : "gray",
+  color: selected ? theme.palette.primary.main : "darkgray",
   fontWeight: selected ? "bold" : "normal",
   borderRadius: 8,
 }));

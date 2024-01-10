@@ -29,6 +29,8 @@ export function useSplitter({ orientation }: SplitterParams) {
   const dragStartedPosition = useRef(splitterPosition);
 
   const handleMouseMove = useCallback((e: MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
     const difference =
       dragStartedPoint.current[orientationKeys.axis] -
       e[orientationKeys.clientAxis];
