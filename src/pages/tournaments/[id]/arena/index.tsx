@@ -62,7 +62,7 @@ export default function Arena(props: ArenaProps) {
 
   const testCasesHeight = testCasesMaximzed
     ? layoutSize.height
-    : layoutSize.height / 2 - horizontalSplitterPosition - 4;
+    : layoutSize.height / 2 - horizontalSplitterPosition - 10;
 
   const descriptionWidth = descriptionMaximzed
     ? layoutSize.width
@@ -104,6 +104,7 @@ export default function Arena(props: ArenaProps) {
               />
               <Box>
                 <TabButton selected={true}>Description</TabButton>
+                <TabButton selected={false}>Submissions</TabButton>
               </Box>
             </Tabbar>
             <Box p={2} overflow="auto" height={layoutSize.height - 48}>
@@ -154,6 +155,7 @@ export default function Arena(props: ArenaProps) {
                       enabled: false,
                     },
                   }}
+                  height={editorHeight - 48}
                   defaultLanguage={selectedTask.language}
                   defaultValue={selectedTask.defaultCode}
                   theme="vs-dark"
