@@ -16,6 +16,7 @@ import {
 import { TestCases, TestResults } from "@/components/arena";
 import { getTasksByTournamentId } from "@/services/taskService";
 import { Task } from "@/models/tasks";
+import { useArenaStore } from "@/hooks/tournaments";
 
 const Editor = dynamic(import("@monaco-editor/react"), { ssr: false });
 
@@ -27,6 +28,7 @@ enum TestCaseTabs {
   TEST_RESULT,
 }
 export default function Arena(props: ArenaProps) {
+  const { name } = useArenaStore();
   const [testCaseTab, setTestCaseTab] = useState(TestCaseTabs.TEST_CASE);
   const layoutSize = useLayoutSize({ heightDifference: 70 });
   const [descriptionMaximzed, setDescriptionMaximized] = useState(false);
@@ -84,7 +86,7 @@ export default function Arena(props: ArenaProps) {
     <PlayerLayout
       headerChildren={
         <>
-          <Timer endDate={new Date(2024, 0, 3, 21, 0)} />
+          <Timer endDate={new Date(2024, 0, 9, 23, 0)} />
           <Box display="flex" alignItems="center" height={32} gap={1}>
             <Button variant="outlined">Run</Button>
             <Button color="success" variant="contained">
