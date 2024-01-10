@@ -1,7 +1,7 @@
 "use client";
 import { PlayerLayout } from "@/layouts";
 import { NextPageContext } from "next";
-import React, { useCallback, useState } from "react";
+import React, { Fragment, useCallback, useState } from "react";
 import dynamic from "next/dynamic";
 import { Box, Button, Typography } from "@mui/material";
 import { useSplitter, useLayoutSize } from "@/hooks/common";
@@ -17,6 +17,9 @@ import { TestCases, TestResults } from "@/components/arena";
 import { getTasksByTournamentId } from "@/services/taskService";
 import { Task } from "@/models/tasks";
 import { useArenaStore } from "@/hooks/tournaments";
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import remarkSuperSub from "remark-supersub";
 
 const Editor = dynamic(import("@monaco-editor/react"), { ssr: false });
 
@@ -123,9 +126,41 @@ export default function Arena(props: ArenaProps) {
                   </Typography>
                 )}
               </Box>
-              <div
-                dangerouslySetInnerHTML={{ __html: selectedTask.description }}
-              ></div>
+              <Markdown
+                remarkPlugins={[remarkGfm, remarkSuperSub]}
+                className="markdown-body"
+                components={{
+                  code: ({ node, children, ...props }: any) => {
+                    if (children[0] && typeof children[0] === "string") {
+                      const text = children;
+                      const regex = /\^(\d+)\^/g;
+
+                      const matches: string[] = [];
+                      let match;
+                      while ((match = regex.exec(text)) !== null) {
+                        matches.push(match[1]); // Access the content captured by the capturing group
+                      }
+                      const regexForSplit = /\^(?:\d+)\^/g;
+
+                      const result = text.split(regexForSplit);
+
+                      return (
+                        <code>
+                          {result.map((part: string, i: number) => (
+                            <Fragment key={i}>
+                              {part}
+                              <sup>{matches[i]}</sup>
+                            </Fragment>
+                          ))}
+                        </code>
+                      );
+                    }
+                    return <code {...props} />;
+                  },
+                }}
+              >
+                {selectedTask.description}
+              </Markdown>
             </Box>
           </FlexibleBox>
         )}
