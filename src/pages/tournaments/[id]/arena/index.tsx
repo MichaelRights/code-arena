@@ -1,7 +1,7 @@
 "use client";
 import { PlayerLayout } from "@/layouts";
 import { NextPageContext } from "next";
-import React, { Fragment, useCallback, useState } from "react";
+import React, { useCallback, useState } from "react";
 import dynamic from "next/dynamic";
 import { Box, Button, Typography } from "@mui/material";
 import { useSplitter, useLayoutSize } from "@/hooks/common";
@@ -17,9 +17,19 @@ import { TestCases, TestResults } from "@/components/arena";
 import { getTasksByTournamentId } from "@/services/taskService";
 import { Task } from "@/models/tasks";
 import { useArenaStore } from "@/hooks/tournaments";
-import Markdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import remarkSuperSub from "remark-supersub";
+import "@uiw/react-md-editor/markdown-editor.css";
+import "@uiw/react-markdown-preview/markdown.css";
+const Markdown = dynamic(
+  () =>
+    import("@uiw/react-md-editor").then((mod) => {
+      return mod.default.Markdown;
+    }),
+  { ssr: false }
+);
+import { getCodeString } from "rehype-rewrite";
+// @ts-ignore
+import katex from "katex";
+import "katex/dist/katex.css";
 
 const Editor = dynamic(import("@monaco-editor/react"), { ssr: false });
 
@@ -112,7 +122,12 @@ export default function Arena(props: ArenaProps) {
                 <TabButton selected={false}>Submissions</TabButton>
               </Box>
             </Tabbar>
-            <Box p={2} overflow="auto" height={layoutSize.height - 48}>
+            <Box
+              px={2.5}
+              py={2}
+              overflow="auto"
+              height={layoutSize.height - 48}
+            >
               <Box
                 pb={1}
                 display="flex"
@@ -127,40 +142,52 @@ export default function Arena(props: ArenaProps) {
                 )}
               </Box>
               <Markdown
-                remarkPlugins={[remarkGfm, remarkSuperSub]}
-                className="markdown-body"
+                style={{ background: "transparent" }}
+                source={selectedTask.description}
                 components={{
-                  code: ({ node, children, ...props }: any) => {
-                    if (children[0] && typeof children[0] === "string") {
-                      const text = children;
-                      const regex = /\^(\d+)\^/g;
-
-                      const matches: string[] = [];
-                      let match;
-                      while ((match = regex.exec(text)) !== null) {
-                        matches.push(match[1]); // Access the content captured by the capturing group
-                      }
-                      const regexForSplit = /\^(?:\d+)\^/g;
-
-                      const result = text.split(regexForSplit);
-
+                  code: ({ children = [], className, ...props }) => {
+                    if (
+                      typeof children === "string" &&
+                      /^\$\$(.*)\$\$/.test(children)
+                    ) {
+                      const html = katex.renderToString(
+                        children.replace(/^\$\$(.*)\$\$/, "$1"),
+                        {
+                          throwOnError: false,
+                        }
+                      );
                       return (
-                        <code>
-                          {result.map((part: string, i: number) => (
-                            <Fragment key={i}>
-                              {part}
-                              <sup>{matches[i]}</sup>
-                            </Fragment>
-                          ))}
-                        </code>
+                        <code
+                          dangerouslySetInnerHTML={{ __html: html }}
+                          style={{ background: "transparent" }}
+                        />
                       );
                     }
-                    return <code {...props} />;
+                    const code =
+                      props.node && props.node.children
+                        ? getCodeString(props.node.children)
+                        : children;
+                    if (
+                      typeof code === "string" &&
+                      typeof className === "string" &&
+                      /^language-katex/.test(className.toLocaleLowerCase())
+                    ) {
+                      const html = katex.renderToString(code, {
+                        throwOnError: false,
+                      });
+                      return (
+                        <code
+                          style={{ fontSize: "150%" }}
+                          dangerouslySetInnerHTML={{ __html: html }}
+                        />
+                      );
+                    }
+                    return (
+                      <code className={String(className)}>{children}</code>
+                    );
                   },
                 }}
-              >
-                {selectedTask.description}
-              </Markdown>
+              />
             </Box>
           </FlexibleBox>
         )}
