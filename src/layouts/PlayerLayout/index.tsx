@@ -22,10 +22,23 @@ export function PlayerLayout({ children, headerChildren }: PlayerLayoutProps) {
         position="sticky"
       >
         <Button
-          sx={{ width: 200, alignItems: "left" }}
+          sx={{ width: 64, height: 40, alignItems: "left" }}
           onClick={() => router.push("/")}
         >
-          <Typography variant="h6">Code Arena</Typography>
+          <Typography
+            sx={{
+              textShadow: "1px 1px 16px #adeade",
+            }}
+            fontSize="0.8rem"
+            variant="subtitle2"
+          >
+            <Typography style={{ all: "inherit", color: "#ec2c40" }}>
+              CODE
+            </Typography>{" "}
+            <Typography style={{ all: "inherit", color: "#00a9e5" }}>
+              ARENA
+            </Typography>
+          </Typography>
         </Button>
         {headerChildren}
       </AppBar>

@@ -4,15 +4,12 @@ export const TESTCASES: TestCase[] = [
   {
     id: 1,
     name: "TestCase 1",
-    parameters: [
-      { key: "num", value: "[4,5,6]" },
-      { key: "target", value: 4 },
-    ],
+    parameters: [{ key: "target", value: 4 }],
   },
   {
     id: 2,
     name: "TestCase 2",
-    parameters: [{ key: "num", value: "[1,2,3]" }],
+    parameters: [{ key: "target", value: 2 }],
   },
 ];
 const markdown = `
@@ -48,13 +45,10 @@ export const TASKS: Task[] = [
     solved: false,
     submitions: [],
     testCases: TESTCASES,
-    defaultCode: `class Solution {
-public:
-    vector<int> twoSum(vector<int>& nums, int target) {
-    
-    }
-};`,
-    language: "cpp",
+    defaultCode: `function logTarget(target) {
+  return target * 2;    
+}`,
+    language: "javascript",
     description: markdown,
   },
 ];

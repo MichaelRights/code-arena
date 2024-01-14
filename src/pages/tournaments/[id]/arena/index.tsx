@@ -1,7 +1,7 @@
 "use client";
 import { PlayerLayout } from "@/layouts";
 import { NextPageContext } from "next";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { Box, Button } from "@mui/material";
 import { useSplitter, useLayoutSize } from "@/hooks/common";
@@ -13,33 +13,52 @@ import {
   Splitter,
   Timer,
 } from "@/components/ui";
-import { TaskDescription, TestCases, TestResults } from "@/components/arena";
+import {
+  TaskDescription,
+  TaskSubmissions,
+  TestCases,
+  TestResults,
+} from "@/components/arena";
 import { getTasksByTournamentId } from "@/services/taskService";
 import { Task } from "@/models/tasks";
-
+import {} from "@monaco-editor/react";
+import { editor } from "monaco-editor";
+import { useArenaStore } from "@/hooks/tournaments";
 const Editor = dynamic(import("@monaco-editor/react"), { ssr: false });
 
 interface ArenaProps {
   tasks: Task[];
+  tournamentId: string;
 }
 enum TestCaseTabs {
   TEST_CASE,
   TEST_RESULT,
 }
+enum TaskDetailsTab {
+  DESCRIPTION,
+  SUBMISSIONS,
+}
+
 export default function Arena(props: ArenaProps) {
   const [testCaseTab, setTestCaseTab] = useState(TestCaseTabs.TEST_CASE);
+  const [taskDetailsTab, setTaskDetailsTab] = useState(
+    TaskDetailsTab.DESCRIPTION
+  );
   const layoutSize = useLayoutSize({ heightDifference: 70 });
   const [descriptionMaximzed, setDescriptionMaximized] = useState(false);
   const [editorMaximzed, setEditorMaximized] = useState(false);
   const [testCasesMaximzed, setTestCasesMaximized] = useState(false);
+  const editorRef = useRef<editor.IStandaloneCodeEditor>();
+  const selectedTask = props.tasks[0];
+  const runCode = useArenaStore((store) => store.runCode);
+  const submitCode = useArenaStore((store) => store.submitCode);
+
   const {
     splitterPosition: verticalSplitterPosition,
     handleDragStart: handleVerticalSplitterDragStart,
   } = useSplitter({
     orientation: "vertical",
   });
-
-  const selectedTask = props.tasks[0];
 
   const {
     splitterPosition: horizontalSplitterPosition,
@@ -60,9 +79,26 @@ export default function Arena(props: ArenaProps) {
     setTestCasesMaximized((prev) => !prev);
   }, []);
 
+  const handleSubmit = useCallback(() => {
+    setTaskDetailsTab(TaskDetailsTab.SUBMISSIONS);
+    const code = editorRef.current!.getValue();
+    submitCode(
+      props.tournamentId,
+      selectedTask.id,
+      code,
+      selectedTask.language
+    );
+  }, [editorRef, selectedTask]);
+
+  const handleRunTestCases = useCallback(() => {
+    setTestCaseTab(TestCaseTabs.TEST_RESULT);
+    const code = editorRef.current!.getValue();
+    runCode(props.tournamentId, selectedTask.id, code, selectedTask.language);
+  }, [editorRef, selectedTask]);
+
   const testCasesHeight = testCasesMaximzed
     ? layoutSize.height
-    : layoutSize.height / 2 - horizontalSplitterPosition - 10;
+    : layoutSize.height / 2 - horizontalSplitterPosition - 6;
 
   const descriptionWidth = descriptionMaximzed
     ? layoutSize.width
@@ -90,10 +126,12 @@ export default function Arena(props: ArenaProps) {
     <PlayerLayout
       headerChildren={
         <>
-          <Timer endDate={new Date(2024, 0, 13, 23, 0)} />
+          <Timer endDate={new Date(2024, 0, 14, 23, 0)} />
           <Box display="flex" alignItems="center" height={32} gap={1}>
-            <Button variant="outlined">Run</Button>
-            <Button color="success" variant="contained">
+            <Button variant="outlined" onClick={handleRunTestCases}>
+              Run
+            </Button>
+            <Button color="success" onClick={handleSubmit} variant="contained">
               Submit
             </Button>
           </Box>
@@ -111,15 +149,33 @@ export default function Arena(props: ArenaProps) {
                 maximized={descriptionMaximzed}
               />
               <Box>
-                <TabButton selected={true}>Description</TabButton>
-                <TabButton selected={false}>Submissions</TabButton>
+                <TabButton
+                  onClick={() => setTaskDetailsTab(TaskDetailsTab.DESCRIPTION)}
+                  selected={TaskDetailsTab.DESCRIPTION === taskDetailsTab}
+                >
+                  Description
+                </TabButton>
+                <TabButton
+                  onClick={() => setTaskDetailsTab(TaskDetailsTab.SUBMISSIONS)}
+                  selected={TaskDetailsTab.SUBMISSIONS === taskDetailsTab}
+                >
+                  Submissions
+                </TabButton>
               </Box>
             </Tabbar>
-            <TaskDescription
-              description={selectedTask.description}
-              solved={selectedTask.solved}
-              title={selectedTask.title}
-            />
+            {taskDetailsTab === TaskDetailsTab.DESCRIPTION && (
+              <TaskDescription
+                description={selectedTask.description}
+                solved={selectedTask.solved}
+                title={selectedTask.title}
+              />
+            )}
+            {taskDetailsTab === TaskDetailsTab.SUBMISSIONS && (
+              <TaskSubmissions
+                taskId={selectedTask.id}
+                tournamentId={props.tournamentId}
+              />
+            )}
           </FlexibleBox>
         )}
         {splittersVisible && (
@@ -149,6 +205,9 @@ export default function Arena(props: ArenaProps) {
                   </Box>
                 </Tabbar>
                 <Editor
+                  onMount={(editor) => {
+                    editorRef.current = editor;
+                  }}
                   options={{
                     suggest: {
                       showIcons: false,
@@ -215,5 +274,5 @@ export default function Arena(props: ArenaProps) {
 export async function getServerSideProps(context: NextPageContext) {
   const id = context.query.id as string;
   const tasks = await getTasksByTournamentId(id);
-  return { props: { tasks } };
+  return { props: { tournamentId: id, tasks } };
 }

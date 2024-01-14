@@ -1,14 +1,15 @@
-import { ExecutedTestCase } from "@/models/tasks";
+import { useArenaStore } from "@/hooks/tournaments";
 import { Box, Typography } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
+import { TestCaseField, TestResult } from "..";
+import { TabButton } from "@/components/ui";
+import { ExecutedTestCase } from "@/models/tasks";
 
-interface TestResultsProps {
-  testResults?: ExecutedTestCase[];
-}
+export function TestResults() {
+  const testResults = useArenaStore((state) => state.testResults);
+  const executing = useArenaStore((state) => state.loadingTestResults);
 
-// TODO: implement test results and test result type
-export function TestResults({ testResults }: TestResultsProps) {
-  if (!testResults) {
+  if (!testResults || executing) {
     return (
       <Box height="100%" display="flex">
         <Typography
@@ -17,16 +18,52 @@ export function TestResults({ testResults }: TestResultsProps) {
           textAlign="center"
           variant="subtitle1"
         >
-          You didn&apos;t run the code yet
+          {executing ? "Executing..." : "You didn't run the code yet"}
         </Typography>
       </Box>
     );
   }
+  return <ExecutedTestResults testResults={testResults} />;
+}
+
+const ExecutedTestResults = ({
+  testResults,
+}: {
+  testResults: ExecutedTestCase[];
+}) => {
+  const [selectedTestCase, setSelectedTestCase] = useState<ExecutedTestCase>(
+    testResults[0]
+  );
   return (
-    <Box>
-      {testResults.map((result) => (
-        <Typography key={result.id}>{result.name}</Typography>
-      ))}
+    <Box display="flex" flexDirection="column" p={2} overflow="auto">
+      <Box display="flex" flexDirection="row" flexWrap="wrap" gap={1}>
+        {testResults.map((tc) => {
+          return (
+            <TabButton
+              selected={selectedTestCase.id === tc.id}
+              variant="outlined"
+              onClick={() => {
+                setSelectedTestCase(tc);
+              }}
+              key={tc.id}
+            >
+              <Typography
+                component="p"
+                color={
+                  selectedTestCase.expectedOutput ===
+                  selectedTestCase.testOutput
+                    ? "lightgreen"
+                    : "red"
+                }
+              >
+                •&nbsp;
+              </Typography>
+              {tc.name}
+            </TabButton>
+          );
+        })}
+      </Box>
+      <TestResult testCase={selectedTestCase} />
     </Box>
   );
-}
+};
