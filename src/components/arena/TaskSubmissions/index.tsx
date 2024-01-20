@@ -17,7 +17,7 @@ export function TaskSubmissions({
 
   if (!submitionResult || executing) {
     return (
-      <Box height="100%" display="flex">
+      <Box height="calc(100% - 40px)" display="flex">
         <Typography
           width="100%"
           alignSelf="center"

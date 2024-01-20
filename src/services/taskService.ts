@@ -7,6 +7,14 @@ export function getTasksByTournamentId(tournamentId: string) {
   });
 }
 
+function executeCode(code: string) {
+  try {
+    return eval(code);
+  } catch (e: any) {
+    return e.message;
+  }
+}
+
 export function runTestCases(
   tournamentId: string,
   taskId: number,
@@ -24,7 +32,7 @@ export function runTestCases(
           name: testCase.name,
           parameters: testCase.parameters,
           expectedOutput: testCase.parameters[0].value,
-          testOutput: eval(wrappedCode),
+          testOutput: executeCode(wrappedCode),
         };
       });
       resolve(testResults);
@@ -45,7 +53,7 @@ export function submitCode(
       for (const testCase of TESTCASES) {
         const wrappedCode = `${code}
     logTarget(${testCase.parameters.map((p) => p.value).toString()});`;
-        const result = eval(wrappedCode);
+        const result = executeCode(wrappedCode);
         if (result !== testCase.parameters[0].value) {
           break;
         }
