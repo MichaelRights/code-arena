@@ -15,11 +15,12 @@ import {
 } from "@/components/ui";
 import {
   TaskDescription,
+  TaskListDrawer,
   TaskSubmissions,
   TestCases,
   TestResults,
 } from "@/components/arena";
-import { getTasksByTournamentId } from "@/services/taskService";
+import { getTaskById, getTasksByTournamentId } from "@/services/taskService";
 import { Task } from "@/models/tasks";
 import {} from "@monaco-editor/react";
 import { editor } from "monaco-editor";
@@ -28,6 +29,7 @@ const Editor = dynamic(import("@monaco-editor/react"), { ssr: false });
 
 interface ArenaProps {
   tasks: Task[];
+  task: Task;
   tournamentId: string;
 }
 enum TestCaseTabs {
@@ -49,7 +51,7 @@ export default function Arena(props: ArenaProps) {
   const [editorMaximzed, setEditorMaximized] = useState(false);
   const [testCasesMaximzed, setTestCasesMaximized] = useState(false);
   const editorRef = useRef<editor.IStandaloneCodeEditor>();
-  const selectedTask = props.tasks[0];
+  const selectedTask = props.task;
   const runCode = useArenaStore((store) => store.runCode);
   const submitCode = useArenaStore((store) => store.submitCode);
 
@@ -134,6 +136,10 @@ export default function Arena(props: ArenaProps) {
             <Button color="success" onClick={handleSubmit} variant="contained">
               Submit
             </Button>
+            <TaskListDrawer
+              tasks={props.tasks}
+              tournamentId={props.tournamentId}
+            />
           </Box>
         </>
       }
@@ -273,6 +279,22 @@ export default function Arena(props: ArenaProps) {
 
 export async function getServerSideProps(context: NextPageContext) {
   const id = context.query.id as string;
+  let taskId;
+  if (context.query.slug) {
+    taskId = (context.query.slug as string[]).shift();
+  }
   const tasks = await getTasksByTournamentId(id);
-  return { props: { tournamentId: id, tasks } };
+  let task: Task;
+  if (taskId) {
+    const selectedTask = await getTaskById(Number.parseInt(taskId));
+    if (selectedTask) {
+      task = selectedTask;
+    } else {
+      task = (await getTaskById(tasks[0].id))!;
+    }
+  } else {
+    task = (await getTaskById(tasks[0].id))!;
+  }
+
+  return { props: { tournamentId: id, tasks, task } };
 }

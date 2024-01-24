@@ -6,6 +6,11 @@ export function getTasksByTournamentId(tournamentId: string) {
     resolve(TASKS);
   });
 }
+export function getTaskById(taskId: number) {
+  return new Promise<Task | undefined>((resolve) => {
+    resolve(TASKS.find((task) => task.id === taskId));
+  });
+}
 
 function executeCode(code: string) {
   try {
@@ -74,7 +79,7 @@ export function submitCode(
           date: new Date(),
           testCase: {
             ...testCase,
-            testOutput: eval(wrappedCode),
+            testOutput: executeCode(wrappedCode),
             expectedOutput: testCase.parameters[0].value,
           },
         });

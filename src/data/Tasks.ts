@@ -51,4 +51,16 @@ export const TASKS: Task[] = [
     language: "javascript",
     description: markdown,
   },
+  {
+    id: 2,
+    title: "Some Task 2",
+    solved: false,
+    submitions: [],
+    testCases: TESTCASES,
+    defaultCode: `function logTarget(target) {
+  return target;    
+}`,
+    language: "javascript",
+    description: markdown,
+  },
 ];

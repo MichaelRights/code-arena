@@ -29,3 +29,7 @@ a {
   align-items: center;
   min-height: 100vh;
 }
+
+.active-link > div {
+  background: red;
+}
